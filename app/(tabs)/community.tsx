@@ -180,25 +180,27 @@ export default function Community() {
     );
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.Header}>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                    <FontAwesome name="arrow-left" size={20} color="#000" />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>Swaggers</Text>
-            </View>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={0}
+        >
+            <SafeAreaView style={styles.container}>
+                <View style={styles.Header}>
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                        <FontAwesome name="arrow-left" size={20} color="#000" />
+                    </TouchableOpacity>
+                    <Text style={styles.headerTitle}>Swaggers</Text>
+                </View>
 
-            <FlatList
-                data={messages}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={styles.chatList}
-            />
+                <FlatList
+                    data={messages}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.id}
+                    contentContainerStyle={styles.chatList}
+                    keyboardShouldPersistTaps="handled"
+                />
 
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                keyboardVerticalOffset={90}
-            >
                 {pickedImage && (
                     <Image source={{ uri: pickedImage }} style={styles.previewImage} />
                 )}
@@ -216,79 +218,79 @@ export default function Community() {
                         <Text style={styles.buttonText}>➤</Text>
                     </TouchableOpacity>
                 </View>
-            </KeyboardAvoidingView>
 
-            {/* Fullscreen image modal */}
-            <Modal visible={modalVisible} transparent animationType="fade">
-                <TouchableOpacity
-                    style={styles.modalOverlay}
-                    activeOpacity={1}
-                    onPress={() => setModalVisible(false)}
-                >
-                    <View style={styles.modalContent}>
-                        <Image source={{ uri: selectedImage ?? '' }} style={styles.fullImage} />
-                    </View>
-                </TouchableOpacity>
-            </Modal>
+                {/* Fullscreen Image Modal */}
+                <Modal visible={modalVisible} transparent animationType="fade">
+                    <TouchableOpacity
+                        style={styles.modalOverlay}
+                        activeOpacity={1}
+                        onPress={() => setModalVisible(false)}
+                    >
+                        <View style={styles.modalContent}>
+                            <Image source={{ uri: selectedImage ?? '' }} style={styles.fullImage} />
+                        </View>
+                    </TouchableOpacity>
+                </Modal>
 
-            {/* Comment Modal */}
-            <Modal visible={commentModalVisible} transparent animationType="slide">
-                <View style={styles.commentModalContainer}>
-                    <View style={styles.commentModalContent}>
-                        {selectedMessage?.image && (
-                            <Image
-                                source={{ uri: selectedMessage.image }}
-                                style={styles.commentModalImage}
-                            />
-                        )}
-                        <Text style={styles.modalMessage}>
-                            {selectedMessage?.text ?? ''}
-                        </Text>
-
-                        <FlatList
-                            data={mockComments}
-                            keyExtractor={(item) => item.id}
-                            style={{ marginBottom: 10 }}
-                            renderItem={({ item }) => (
-                                <View style={styles.commentItem}>
-                                    <Text style={styles.commentUser}>{item.username}</Text>
-                                    <Text style={styles.commentTextOnly}>{item.text}</Text>
-                                    <Text style={styles.commentTimestamp}>{item.timestamp}</Text>
-                                </View>
+                {/* Comment Modal */}
+                <Modal visible={commentModalVisible} transparent animationType="slide">
+                    <View style={styles.commentModalContainer}>
+                        <View style={styles.commentModalContent}>
+                            {selectedMessage?.image && (
+                                <Image
+                                    source={{ uri: selectedMessage.image }}
+                                    style={styles.commentModalImage}
+                                />
                             )}
-                        />
-                        <View style={styles.commentInputContainer}>
-                            <TextInput
-                                style={styles.commentInput}
-                                placeholder="Write a comment..."
-                                value={commentInput}
-                                onChangeText={setCommentInput}
+                            <Text style={styles.modalMessage}>
+                                {selectedMessage?.text ?? ''}
+                            </Text>
+
+                            <FlatList
+                                data={mockComments}
+                                keyExtractor={(item) => item.id}
+                                style={{ marginBottom: 10 }}
+                                renderItem={({ item }) => (
+                                    <View style={styles.commentItem}>
+                                        <Text style={styles.commentUser}>{item.username}</Text>
+                                        <Text style={styles.commentTextOnly}>{item.text}</Text>
+                                        <Text style={styles.commentTimestamp}>{item.timestamp}</Text>
+                                    </View>
+                                )}
                             />
-                            <TouchableOpacity onPress={handleCommentSend} style={styles.sendButton}>
-                                <Text style={styles.buttonText}>➤</Text>
+                            <View style={styles.commentInputContainer}>
+                                <TextInput
+                                    style={styles.commentInput}
+                                    placeholder="Write a comment..."
+                                    value={commentInput}
+                                    onChangeText={setCommentInput}
+                                />
+                                <TouchableOpacity onPress={handleCommentSend} style={styles.sendButton}>
+                                    <Text style={styles.buttonText}>➤</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <TouchableOpacity
+                                onPress={() => setCommentModalVisible(false)}
+                                style={{ alignSelf: 'center', marginTop: 10 }}
+                            >
+                                <Text style={{ color: 'gray' }}>Close</Text>
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity
-                            onPress={() => setCommentModalVisible(false)}
-                            style={{ alignSelf: 'center', marginTop: 10 }}
-                        >
-                            <Text style={{ color: 'gray' }}>Close</Text>
-                        </TouchableOpacity>
                     </View>
-                </View>
-            </Modal>
-        </SafeAreaView>
+                </Modal>
+            </SafeAreaView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     commentModalImage: {
-    width: '100%',
-    height: 200,
-    borderRadius: 12,
-    marginBottom: 10,
-    resizeMode: 'cover',
-},
+        width: '100%',
+        height: 200,
+        borderRadius: 12,
+        marginBottom: 10,
+        resizeMode: 'cover',
+    },
     commentModalContainer: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.5)',
@@ -416,6 +418,7 @@ const styles = StyleSheet.create({
         borderColor: '#ddd',
         padding: 10,
         backgroundColor: '#fff',
+        marginBottom: -40
     },
     input: {
         flex: 1,

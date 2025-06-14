@@ -104,7 +104,7 @@ export default function Home() {
         resizeMode="contain"
       />
       <View style={styles.qrContainer}>
-        <Ionicons name="qr-code-sharp" size={35} />
+        <Ionicons name="qr-code-sharp" size={45} />
       </View>
 
       <View style={styles.swiperWrapper}>
@@ -119,10 +119,16 @@ export default function Home() {
               />
               <View style={styles.cardDetails}>
                 <Text style={styles.productName}>{card.name}</Text>
-                <View style={styles.row}>
-                  <Text style={styles.brandText}>{card.brand}</Text>
-                  <Image source={require("../../assets/verified.png")} />
+                <View style={styles.brandRow}>
+                  <Text
+                    style={styles.brandText}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    {card.brand}
+                  </Text>
                 </View>
+
                 <View style={styles.row}>
                   <Text style={styles.price}>₹{card.price}</Text>
                   <TouchableOpacity onPress={() => Linking.openURL(card.link)}>
@@ -212,15 +218,15 @@ const styles = StyleSheet.create({
   },
   qrContainer: {
     position: 'absolute',
-    top: 80,
-    right: 10,
+    top: 100,
+    right: 20,
     padding: 16,
     zIndex: 10,
   },
   swiperWrapper: {
     flex: 1,
     paddingHorizontal: 16,
-    marginTop: -64,
+    marginTop: -10,
   },
   card: {
     backgroundColor: '#fff',
@@ -230,7 +236,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 4 },
     overflow: 'hidden',
-    height: '85%',
+    height: '75%',
   },
   cardImage: {
     width: '100%',
@@ -242,17 +248,23 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#1f2937', 
+    color: '#1f2937',
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexWrap: 'wrap',
   },
   brandText: {
     fontSize: 18,
     color: '#000',
-    marginBottom: 4,
-    marginRight: 10,
+    flex: 1,              // 👈 Key fix: gives Text all available width
+    marginRight: 8,
+  },
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
   },
   price: {
     fontSize: 18,
