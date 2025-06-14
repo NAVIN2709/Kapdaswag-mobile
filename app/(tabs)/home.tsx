@@ -6,12 +6,14 @@ import {
   TouchableOpacity,
   Linking,
   StyleSheet,
-  Dimensions,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-deck-swiper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { StatusBar } from 'expo-status-bar';
+import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
+import { Modal } from 'react-native';
 
 const cards = [
   {
@@ -97,17 +99,105 @@ const cards = [
 ];
 
 export default function Home() {
+  const [showCamera, setShowCamera] = React.useState(false);
+  const [permission, requestPermission] = useCameraPermissions();
+  const cameraRef = React.useRef(null);
+
+  const handleQRPress = () => {
+    if (!permission) {
+      Alert.alert('Permission Status', 'Camera permission is still loading...');
+      return;
+    }
+    
+    if (!permission.granted) {
+      Alert.alert(
+        'Camera Permission Required',
+        'This app needs camera access to scan QR codes.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Grant Permission', onPress: requestPermission }
+        ]
+      );
+      return;
+    }
+    
+    setShowCamera(true);
+  };
+
+  const closeCamera = () => {
+    setShowCamera(false);
+  };
+
+  const renderCameraContent = () => {
+    if (!permission) {
+      return (
+        <View style={styles.cameraMessage}>
+          <Text style={styles.messageText}>Loading camera permissions...</Text>
+        </View>
+      );
+    }
+
+    if (!permission.granted) {
+      return (
+        <View style={styles.cameraMessage}>
+          <Text style={styles.messageText}>We need your permission to show the camera</Text>
+          <TouchableOpacity 
+            onPress={requestPermission}
+            style={styles.retryButton}
+          >
+            <Text style={styles.retryButtonText}>Grant Permission</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+
+    return (
+      <View style={styles.cameraContainer}>
+        <CameraView
+          ref={cameraRef}
+          style={styles.camera}
+          facing="back"
+          ratio="16:9"
+        />
+        <View style={styles.cameraOverlay}>
+          <TouchableOpacity
+            onPress={closeCamera}
+            style={styles.closeButton}
+          >
+            <Ionicons name="close" size={28} color="#fff" />
+          </TouchableOpacity>
+          
+          <View style={styles.scanArea}>
+            <View style={styles.scanFrame} />
+            <Text style={styles.scanText}>Point camera at QR code</Text>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-       <StatusBar style="dark" />
+      <StatusBar style="dark" />
       <Image
         source={require("../../assets/kapdaswag3.png")}
         style={styles.logo}
         resizeMode="contain"
       />
-      <View style={styles.qrContainer}>
+      <TouchableOpacity onPress={handleQRPress} style={styles.qrContainer}>
         <Ionicons name="qr-code-sharp" size={45} />
-      </View>
+      </TouchableOpacity>
+
+      {/* Camera Modal */}
+      <Modal 
+        visible={showCamera} 
+        animationType="slide"
+        onRequestClose={closeCamera}
+      >
+        <SafeAreaView style={styles.modalContainer}>
+          {renderCameraContent()}
+        </SafeAreaView>
+      </Modal>
 
       <View style={styles.swiperWrapper}>
         <Swiper
@@ -210,7 +300,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f3f4f6", // Tailwind's bg-gray-100
+    backgroundColor: "#f3f4f6",
   },
   logo: {
     height: 70,
@@ -260,7 +350,7 @@ const styles = StyleSheet.create({
   brandText: {
     fontSize: 18,
     color: '#000',
-    flex: 1,              // 👈 Key fix: gives Text all available width
+    flex: 1,
     marginRight: 8,
   },
   brandRow: {
@@ -308,5 +398,78 @@ const styles = StyleSheet.create({
     width: 120,
     height: 80,
     opacity: 0.8,
+  },
+  // New camera-related styles
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  cameraContainer: {
+    flex: 1,
+    position: 'relative',
+  },
+  camera: {
+    flex: 1,
+  },
+  cameraOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'transparent',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 12,
+    borderRadius: 25,
+    zIndex: 10,
+  },
+  scanArea: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: [{ translateX: -125 }, { translateY: -125 }],
+    alignItems: 'center',
+  },
+  scanFrame: {
+    width: 250,
+    height: 250,
+    borderWidth: 2,
+    borderColor: '#fff',
+    borderRadius: 12,
+    backgroundColor: 'transparent',
+  },
+  scanText: {
+    color: '#fff',
+    fontSize: 16,
+    marginTop: 20,
+    textAlign: 'center',
+  },
+  cameraMessage: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  messageText: {
+    color: '#fff',
+    fontSize: 18,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  retryButton: {
+    backgroundColor: '#ec4899',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
