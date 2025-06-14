@@ -55,7 +55,7 @@ export default function SplashScreen() {
               easing: Easing.out(Easing.ease),
               useNativeDriver: true,
             }).start(() => {
-              router.replace('/(tabs)/home');
+              router.replace('/onboarding/onboarding');
             });
           }, 800);
         });

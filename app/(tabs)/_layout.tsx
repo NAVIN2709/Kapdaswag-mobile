@@ -2,6 +2,7 @@ import { Text, View, TouchableWithoutFeedback } from 'react-native';
 import { Tabs } from 'expo-router';
 import React from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { StatusBar } from 'expo-status-bar';
 
 export default function _layout() {
     return (

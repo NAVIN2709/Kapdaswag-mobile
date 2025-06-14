@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 
 type Message = {
     id: string;
@@ -186,6 +187,7 @@ export default function Community() {
             keyboardVerticalOffset={0}
         >
             <SafeAreaView style={styles.container}>
+                <StatusBar style='dark' />
                 <View style={styles.Header}>
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                         <FontAwesome name="arrow-left" size={20} color="#000" />

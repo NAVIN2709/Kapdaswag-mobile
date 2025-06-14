@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 
 const INCOMING_MATCHES = [
     {
@@ -164,6 +165,7 @@ const MatchesScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar style='dark' />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <FontAwesome name="arrow-left" size={20} color="#000" />

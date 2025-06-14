@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-deck-swiper';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { StatusBar } from 'expo-status-bar';
 
 const cards = [
   {
@@ -98,6 +99,7 @@ const cards = [
 export default function Home() {
   return (
     <SafeAreaView style={styles.container}>
+       <StatusBar style="dark" />
       <Image
         source={require("../../assets/kapdaswag3.png")}
         style={styles.logo}
