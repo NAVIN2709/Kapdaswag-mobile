@@ -85,8 +85,6 @@ export default function OnboardingScreen() {
         return formData.username.trim().length >= 3;
       case 2:
         return !profileImage.includes('Upload%20profile%20photo');
-      case 3:
-        return formData.bio.trim().length >= 10;
       case 5:
         return formData.interests.length >= 3;
       default:
@@ -371,7 +369,8 @@ const styles = StyleSheet.create({
   },
   interestText: {
     fontSize: 14,
-    color: '#666',
+    color: '#333',
+    fontWeight:'500'
   },
   selectedInterestText: {
     color: '#fff',

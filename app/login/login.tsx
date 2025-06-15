@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
         color: '#666',
         marginTop: 4,
         textAlign: 'center',
+        width:'100%'
     },
     contentContainer: {
         flex: 1,

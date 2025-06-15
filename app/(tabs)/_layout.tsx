@@ -35,6 +35,7 @@ export default function _layout() {
                 name="likes"
                 options={{
                     headerShown: false,
+                    animation:'shift',
                     tabBarIcon: ({ focused }) => (
                         <Ionicons size={27} name={focused ? "heart" : "heart-outline"} />
                     ),
@@ -49,6 +50,7 @@ export default function _layout() {
                 name="chatlist"
                 options={{
                     headerShown: false,
+                    animation:'shift',
                     tabBarIcon: ({ focused }) => (
                         <Ionicons size={27} name={focused ? "chatbubble-ellipses" : "chatbubble-ellipses-outline"} />
                     ),
@@ -63,6 +65,7 @@ export default function _layout() {
                 name="community"
                 options={{
                     headerShown: false,
+                    animation:'shift',
                     tabBarIcon: ({ focused }) => (
                         <Ionicons size={27} name={focused ? "people" : "people-outline"} />
                     ),
@@ -77,6 +80,7 @@ export default function _layout() {
                 name="profile"
                 options={{
                     headerShown: false,
+                    animation:'shift',
                     tabBarIcon: ({ focused }) => (
                         <Ionicons size={27} name={focused ? "person" : "person-outline"} />
                     ),

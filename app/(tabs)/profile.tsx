@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
+import { useNavigation } from '@react-navigation/native';
 
 const INTEREST_OPTIONS = [
   'Minimalist', 'Streetwear', 'Casual', 'Formal', 'Vintage',
@@ -22,6 +23,7 @@ const INTEREST_OPTIONS = [
 ];
 
 export default function ProfileScreen() {
+  const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [username, setUsername] = useState('kapdaswag2025');
   const [bio, setBio] = useState('hello');
@@ -65,10 +67,10 @@ export default function ProfileScreen() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>My Profile</Text>
-        <TouchableOpacity>
-          <FontAwesome name="cog" size={24} color="#333" />
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <FontAwesome name="arrow-left" size={20} color="#000" />
         </TouchableOpacity>
+        <Text style={styles.headerText}>My Profile</Text>
       </View>
 
       {/* Main Profile View */}
@@ -207,19 +209,22 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: 'white' },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
     borderColor: '#e5e7eb',
   },
-  headerText: { fontSize: 18, fontWeight: 'bold', color: '#1f2937' },
+  backButton: {
+    marginTop: 8,
+    marginRight: 12,
+  },
+  headerText: { fontSize: 21, fontWeight: 'bold', color: '#1f2937' },
   scrollContainer: { padding: 20 },
   profileSection: { alignItems: 'center', marginBottom: 32 },
   avatar: { width: 96, height: 96, borderRadius: 48, marginBottom: 16 },
   username: { fontSize: 18, fontWeight: 'bold', color: '#1f2937', marginBottom: 8 },
-  bio: { fontSize: 14, color: '#374151', textAlign: 'center', paddingHorizontal: 20, marginBottom: 16 },
+  bio: { fontSize: 14, color: '#374151', textAlign: 'center', paddingHorizontal: 20, marginBottom: 16,width:'100%' },
   editButton: { backgroundColor: '#db2777', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 999 },
   editButtonText: { color: 'white', fontWeight: '600' },
   section: { marginBottom: 32 },

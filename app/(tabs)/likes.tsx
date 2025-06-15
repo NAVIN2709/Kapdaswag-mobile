@@ -141,7 +141,6 @@ const MatchesScreen = () => {
       <Image source={{ uri: item.image }} style={styles.avatar} />
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.bio}>{item.bio}</Text>
         <Text style={styles.matchPercent}>{item.matchPercentage} match</Text>
       </View>
       <TouchableOpacity onPress={() => handleMessageUser(item.name)} style={styles.giveRequestBtn}>

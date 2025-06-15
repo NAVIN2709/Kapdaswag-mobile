@@ -10,44 +10,59 @@ const MATCHED_USERS = [
         name: 'Liam',
         bio: "Coffee lover and music enthusiast.",
         image: "https://api.a0.dev/assets/image?text=Man with classic casual style&aspect=1:1&seed=21",
-        interests: ['Casual', 'Vintage', 'Denim', 'Sneakers']
+        interests: ['Casual', 'Vintage', 'Denim', 'Sneakers'],
+        instagram: '@liamstyles',
+        snapchat: '@snapliam'
+
     },
     {
         id: '5',
         name: 'Emma',
         bio: "Designer at heart. Dog mom.",
         image: "https://api.a0.dev/assets/image?text=Woman with modern fashion style&aspect=1:1&seed=22",
-        interests: ['Modern', 'Minimalist', 'Chic', 'Monochrome']
+        interests: ['Modern', 'Minimalist', 'Chic', 'Monochrome'],
+        instagram: '@emma.designs',
+        snapchat: '@emmathedogmom'
+
     },
     {
         id: '10',
         name: 'Oliver',
         bio: "Traveler. Bookworm. Introvert.",
         image: "https://api.a0.dev/assets/image?text=Man with vintage style&aspect=1:1&seed=23",
-        interests: ['Vintage', 'Layered', 'Corduroy', 'Muted Tones']
+        interests: ['Vintage', 'Layered', 'Corduroy', 'Muted Tones'],
+        instagram: '@vintage.oliver',
+        snapchat: '@oliversnaps'
     },
     {
         id: '11',
         name: 'Ava',
         bio: "Yoga and matcha addict 🌱",
         image: "https://api.a0.dev/assets/image?text=Woman with bohemian fashion&aspect=1:1&seed=24",
-        interests: ['Bohemian', 'Floral', 'Earth Tones', 'Layered Jewelry']
+        interests: ['Bohemian', 'Floral', 'Earth Tones', 'Layered Jewelry'],
+        instagram: '@ava.yoga',
+        snapchat: '@avaboho'
     },
     {
         id: '12',
         name: 'Noah',
         bio: "Engineer. Meme lord. Cat person.",
         image: "https://api.a0.dev/assets/image?text=Man with smart casual style&aspect=1:1&seed=25",
-        interests: ['Smart Casual', 'Button-ups', 'Chinos', 'Loafers']
+        interests: ['Smart Casual', 'Button-ups', 'Chinos', 'Loafers'],
+        instagram: '@noah.codes',
+        snapchat: '@noahmeme'
     },
     {
         id: '14',
         name: 'Isabella',
         bio: "Love art, photography & deep talks.",
         image: "https://api.a0.dev/assets/image?text=Woman with artsy look&aspect=1:1&seed=26",
-        interests: ['Artsy', 'Oversized', 'Graphic Tees', 'Chunky Accessories']
+        interests: ['Artsy', 'Oversized', 'Graphic Tees', 'Chunky Accessories'],
+        instagram: '@isabellartsy',
+        snapchat: '@bellasnaps'
     }
 ];
+
 
 const ViewProfile = () => {
     const router = useRouter();
@@ -91,6 +106,24 @@ const ViewProfile = () => {
                         ))}
                     </View>
                 </View>
+                <View style={styles.socialSection}>
+                    <Text style={styles.socialTitle}>Social</Text>
+                    <View style={styles.socialIconsRow}>
+                        {user.instagram && (
+                            <View style={styles.iconWrapper}>
+                                <FontAwesome name="instagram" size={24} color="#C13584" />
+                                <Text style={styles.handleText}>{user.instagram}</Text>
+                            </View>
+                        )}
+                        {user.snapchat && (
+                            <View style={styles.iconWrapper}>
+                                <FontAwesome name="snapchat-ghost" size={24} color="#FFFC00" />
+                                <Text style={styles.handleText}>{user.snapchat}</Text>
+                            </View>
+                        )}
+                    </View>
+                </View>
+
             </ScrollView>
         </SafeAreaView>
     );
@@ -100,6 +133,37 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff'
+    },
+    socialSection: {
+        marginTop: 20,
+        paddingHorizontal: 24
+    },
+    socialTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#1F2937',
+        marginBottom: 12
+    },
+    socialIconsRow: {
+        flexDirection: 'row',
+        gap: 20,
+        flexWrap: 'wrap'
+    },
+    iconWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#F9FAFB',
+        borderRadius: 16,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        marginBottom: 10,
+        width:'70%'
+    },
+    handleText: {
+        marginLeft: 8,
+        fontSize: 14,
+        color: '#000000',
+        width:'100%'
     },
     scrollContainer: {
         paddingBottom: 30
