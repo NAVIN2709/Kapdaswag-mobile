@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 
 const INTEREST_OPTIONS = [
   'Minimalist', 'Streetwear', 'Casual', 'Formal', 'Vintage',
@@ -23,18 +25,48 @@ const INTEREST_OPTIONS = [
 ];
 
 export default function ProfileScreen() {
+  const router=useRouter();
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
-  const [username, setUsername] = useState('kapdaswag2025');
-  const [bio, setBio] = useState('hello');
-  const [instagram, setInstagram] = useState('kapdaswag');
-  const [snapchat, setSnapchat] = useState('kapdaswag123');
-  const [interests, setInterests] = useState(['fashion', 'code', 'Casuals']);
-  const [profileImage, setProfileImage] = useState(
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUrnmr3CB1oDs0WqiWPzNxENXCnRE-1yKVKw&s'
-  );
+  const [username, setUsername] = useState('');
+  const [bio, setBio] = useState('');
+  const [instagram, setInstagram] = useState('');
+  const [snapchat, setSnapchat] = useState('');
+  const [interests, setInterests] = useState([]);
+  const [profileImage, setProfileImage] = useState('');
 
-  const toggleInterest = (interest: string) => {
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const storedData = await AsyncStorage.getItem('userData');
+        if (storedData) {
+          const parsed = JSON.parse(storedData);
+          setUsername(parsed.username || '');
+          setBio(parsed.bio || '');
+          setInstagram(parsed.instagram || '');
+          setSnapchat(parsed.snapchat || '');
+          setInterests(parsed.interests || []);
+          setProfileImage(parsed.profileImage || '');
+          console.log('Loaded from AsyncStorage:', parsed);
+        } else {
+          // Defaults
+          setUsername('kapdaswag2025');
+          setBio('hello');
+          setInstagram('kapdaswag');
+          setSnapchat('kapdaswag123');
+          setInterests(['fashion', 'code', 'Casuals']);
+          setProfileImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUrnmr3CB1oDs0WqiWPzNxENXCnRE-1yKVKw&s');
+          console.log('No data found. Using defaults.');
+        }
+      } catch (e) {
+        console.error('Failed to load data', e);
+      }
+    };
+
+    loadUserData();
+  }, []);
+
+  const toggleInterest = (interest) => {
     if (interests.includes(interest)) {
       setInterests(interests.filter(i => i !== interest));
     } else {
@@ -48,24 +80,41 @@ export default function ProfileScreen() {
     alert("Profile photo updated");
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!username.trim()) {
       alert("Username is required");
       return;
     }
-    alert("Profile updated successfully");
-    setModalVisible(false);
+    const newUserData = {
+      username,
+      bio,
+      instagram,
+      snapchat,
+      interests,
+      profileImage,
+    };
+    try {
+      await AsyncStorage.setItem('userData', JSON.stringify(newUserData));
+      alert("Profile updated successfully");
+      setModalVisible(false);
+    } catch (e) {
+      alert("Failed to save");
+    }
   };
 
-  const handleLogout = () => {
-    alert('Logged out');
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('userData');
+      router.replace('/login');
+    } catch (e) {
+      console.error('Logout error', e);
+    }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="dark" />
 
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <FontAwesome name="arrow-left" size={20} color="#000" />
@@ -73,7 +122,6 @@ export default function ProfileScreen() {
         <Text style={styles.headerText}>My Profile</Text>
       </View>
 
-      {/* Main Profile View */}
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.profileSection}>
           <Image source={{ uri: profileImage }} style={styles.avatar} />
@@ -84,7 +132,6 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Interests */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Style Interests</Text>
           <View style={styles.interestWrap}>
@@ -96,26 +143,24 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Social Media */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Social Media</Text>
           <View style={styles.socialList}>
-            {instagram && (
+            {instagram ? (
               <View style={styles.socialItem}>
                 <FontAwesome name="instagram" size={24} color="#E1306C" />
                 <Text style={styles.socialText}>{instagram}</Text>
               </View>
-            )}
-            {snapchat && (
+            ) : null}
+            {snapchat ? (
               <View style={styles.socialItem}>
                 <FontAwesome name="snapchat-ghost" size={24} color="#FFFC00" />
                 <Text style={styles.socialText}>{snapchat}</Text>
               </View>
-            )}
+            ) : null}
           </View>
         </View>
 
-        {/* Logout */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
@@ -144,14 +189,12 @@ export default function ProfileScreen() {
                 </TouchableOpacity>
               </View>
 
-              {/* Username */}
               <Text style={styles.label}>Username</Text>
               <View style={styles.inputRow}>
                 <Text style={styles.inputPrefix}>@</Text>
                 <TextInput style={styles.textInput} value={username} onChangeText={setUsername} />
               </View>
 
-              {/* Bio */}
               <Text style={styles.label}>Bio</Text>
               <TextInput
                 style={styles.bioInput}
@@ -163,7 +206,6 @@ export default function ProfileScreen() {
               />
               <Text style={styles.charCount}>{bio.length}/150</Text>
 
-              {/* Socials */}
               <Text style={styles.sectionTitle}>Social Media</Text>
 
               <Text style={styles.label}>Instagram</Text>
@@ -187,10 +229,16 @@ export default function ProfileScreen() {
                   return (
                     <TouchableOpacity
                       key={index}
-                      style={[styles.interestOption, selected ? styles.interestSelected : styles.interestUnselected]}
+                      style={[
+                        styles.interestOption,
+                        selected ? styles.interestSelected : styles.interestUnselected
+                      ]}
                       onPress={() => toggleInterest(interest)}
                     >
-                      <Text style={[styles.interestOptionText, selected ? styles.selectedText : styles.unselectedText]}>
+                      <Text style={[
+                        styles.interestOptionText,
+                        selected ? styles.selectedText : styles.unselectedText
+                      ]}>
                         {interest}
                       </Text>
                     </TouchableOpacity>
@@ -215,16 +263,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#e5e7eb',
   },
-  backButton: {
-    marginTop: 8,
-    marginRight: 12,
-  },
+  backButton: { marginTop: 8, marginRight: 12 },
   headerText: { fontSize: 21, fontWeight: 'bold', color: '#1f2937' },
   scrollContainer: { padding: 20 },
   profileSection: { alignItems: 'center', marginBottom: 32 },
   avatar: { width: 96, height: 96, borderRadius: 48, marginBottom: 16 },
   username: { fontSize: 18, fontWeight: 'bold', color: '#1f2937', marginBottom: 8 },
-  bio: { fontSize: 14, color: '#374151', textAlign: 'center', paddingHorizontal: 20, marginBottom: 16,width:'100%' },
+  bio: { fontSize: 14, color: '#374151', textAlign: 'center', paddingHorizontal: 20, marginBottom: 16, width: '100%' },
   editButton: { backgroundColor: '#db2777', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 999 },
   editButtonText: { color: 'white', fontWeight: '600' },
   section: { marginBottom: 32 },
@@ -234,7 +279,7 @@ const styles = StyleSheet.create({
   interestText: { color: 'white', fontWeight: '500', fontSize: 14 },
   socialList: { gap: 12 },
   socialItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-  socialText: { marginLeft: 12, fontSize: 16, color: '#1f2937' },
+  socialText: { marginLeft: 12, fontSize: 16, color: '#1f2937',width:'100%' },
   logoutButton: {
     marginTop: 16,
     marginBottom: 40,
@@ -245,8 +290,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   logoutText: { color: '#db2777', fontWeight: '600', fontSize: 16 },
-
-  // Modal
   modalContainer: { flex: 1, backgroundColor: 'white' },
   modalHeader: {
     flexDirection: 'row',

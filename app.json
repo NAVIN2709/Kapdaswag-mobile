@@ -51,9 +51,7 @@
       }
     },
     "owner": "navin2006",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
+    "runtimeVersion": "1.0.0",
     "updates": {
       "url": "https://u.expo.dev/29cb100a-f3ed-4082-a412-4e8d3b0570f2"
     }

@@ -1,22 +1,18 @@
 import React, { useState, useRef } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  ScrollView,
-  Image,
-  Dimensions,
-  Animated,
+  View, Text, StyleSheet, TouchableOpacity, TextInput,
+  ScrollView, Image, Dimensions, Animated
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
+
 const INTERESTS = [
   'Minimalist', 'Streetwear', 'Vintage', 'Bohemian', 'Luxury',
   'Sustainable', 'Business Casual', 'Athleisure', 'Avant-garde',
@@ -69,14 +65,26 @@ export default function OnboardingScreen() {
     });
   };
 
-  const handlePickImage = () => {
-    const randomProfileImages = [
-      'https://api.a0.dev/assets/image?text=Fashion%20profile%20woman%20stylish%20close-up%20portrait&aspect=1:1',
-      'https://api.a0.dev/assets/image?text=Fashion%20profile%20man%20stylish%20close-up%20portrait&aspect=1:1',
-      'https://api.a0.dev/assets/image?text=Fashion%20influencer%20artsy%20portrait&aspect=1:1',
-    ];
-    const randomImage = randomProfileImages[Math.floor(Math.random() * randomProfileImages.length)];
-    setProfileImage(randomImage);
+  const handlePickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+      aspect: [1, 1],
+      allowsEditing: true,
+    });
+
+    if (!result.canceled) {
+      setProfileImage(result.assets[0].uri);
+    } else {
+      // fallback to a random one
+      const randomImages = [
+        'https://api.a0.dev/assets/image?text=Fashion%20profile%20woman%20stylish%20close-up%20portrait&aspect=1:1',
+        'https://api.a0.dev/assets/image?text=Fashion%20profile%20man%20stylish%20close-up%20portrait&aspect=1:1',
+        'https://api.a0.dev/assets/image?text=Fashion%20influencer%20artsy%20portrait&aspect=1:1',
+      ];
+      const fallback = randomImages[Math.floor(Math.random() * randomImages.length)];
+      setProfileImage(fallback);
+    }
   };
 
   const validateCurrentStep = () => {
@@ -102,14 +110,23 @@ export default function OnboardingScreen() {
     if (step > 1) animateToPrevStep();
   };
 
-  const handleComplete = () => {
-    setLoading(true);
-    setTimeout(() => {
-      console.log({ ...formData, profileImage });
-      setLoading(false);
-      router.replace('/(tabs)/home');
-    }, 1500);
-  };
+  const handleComplete = async () => {
+  setLoading(true);
+  const userData = { ...formData, profileImage };
+
+  try {
+    await AsyncStorage.setItem('userData', JSON.stringify(userData));
+    console.log('User data saved to local storage');
+  } catch (error) {
+    console.error('Failed to save user data:', error);
+  }
+
+  setTimeout(() => {
+    setLoading(false);
+    router.replace('/(tabs)/home');
+  }, 1500);
+};
+
 
   const renderStep = () => {
     switch (step) {
@@ -145,16 +162,15 @@ export default function OnboardingScreen() {
       case 3:
         return (
           <View style={styles.stepContent}>
-            <Text style={styles.stepTitle}>Tell us about your style</Text>
+            <Text style={styles.stepTitle}>Tell us about yourself</Text>
             <TextInput
               style={[styles.input, styles.bioInput]}
-              placeholder="Describe your fashion vibe..."
+              placeholder="Describe your vibe..."
               value={formData.bio}
               onChangeText={text => updateFormData('bio', text)}
               multiline
               maxLength={150}
             />
-            <Text style={styles.charCount}>{formData.bio.length}/150</Text>
           </View>
         );
       case 4:
@@ -216,7 +232,7 @@ export default function OnboardingScreen() {
         <View style={{ width: 20 }} />
       </View>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Animated.View style={[styles.stepContainer, { transform: [{ translateX: slideAnim }] }]}> 
+        <Animated.View style={[styles.stepContainer, { transform: [{ translateX: slideAnim }] }]}>
           {renderStep()}
         </Animated.View>
       </ScrollView>
