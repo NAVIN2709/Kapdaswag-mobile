@@ -7,8 +7,8 @@ export default function RootLayout() {
   <StatusBar barStyle="dark-content" backgroundColor="transparent" />
   <Stack >
     <Stack.Screen name="index" options={{ headerShown: false }} />
-    <Stack.Screen name="onboarding/index" options={{ headerShown: false }} />
-    <Stack.Screen name="login/index" options={{ headerShown: false }} />
+    <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+    <Stack.Screen name="(auth)/login/index" options={{ headerShown: false }} />
     <Stack.Screen name="(tabs)"
       options={{
         headerShown: false,

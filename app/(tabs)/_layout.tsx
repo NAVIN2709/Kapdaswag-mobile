@@ -86,7 +86,7 @@ export default function _layout() {
                     ),
                     tabBarLabel: ({ focused }) => (
                         <Text style={{fontSize:10, color: focused ? 'deeppink' : 'black' }}>
-                            Youu
+                            You
                         </Text>
                     ),
                 }}

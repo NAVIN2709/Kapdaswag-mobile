@@ -15,7 +15,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../firebaseConfig';
+import { auth } from '../../../firebaseConfig';
 
 const { width } = Dimensions.get('window');
 
@@ -68,7 +68,7 @@ const { width } = Dimensions.get('window');
             <StatusBar style="dark" />
             <View style={styles.logoContainer}>
                 <Image
-                    source={require('../../assets/images/icon.png')}
+                    source={require('../../../assets/images/icon.png')}
                     style={styles.logo}
                     resizeMode="contain"
                 />

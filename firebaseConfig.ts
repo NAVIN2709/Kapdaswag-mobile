@@ -1,31 +1,33 @@
-// firebaseConfig.ts
-import { initializeApp } from 'firebase/app';
-import {
-  getAuth,
-  initializeAuth,
-  getReactNativePersistence
-} from 'firebase/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getFirestore } from 'firebase/firestore';
+// firebase.js
+import { initializeApp } from "firebase/app";
+import { initializeAuth, getReactNativePersistence,getAuth } from "firebase/auth";
+import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCD87_1MzXb6Kr1tA2fuWqHuMcnsthQiOI",
   authDomain: "kapdaswag.firebaseapp.com",
-  databaseURL: "https://kapdaswag-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "kapdaswag",
-  storageBucket: "kapdaswag.appspot.com", // ✅ Correct format
+  storageBucket: "kapdaswag.appspot.com",
   messagingSenderId: "519558713442",
   appId: "1:519558713442:web:f93bfc7b92e5e146d5413b",
-  measurementId: "G-CRHHCL0K87"
 };
 
-// Initialize Firebase App
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Auth with persistence for React Native
-export const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(AsyncStorage),
-});
+// Initialize Auth
+let auth;
+try {
+  auth = initializeAuth(app, {
+    persistence: getReactNativePersistence(ReactNativeAsyncStorage),
+  });
+} catch (error) {
+  console.log("Error initializing auth:", error);
+  auth = getAuth(app); // fallback to default auth if initialization fails
+}
 
-// Firestore DB
-export const db = getFirestore(app);
+// Initialize Firestore
+const db = getFirestore(app);
+
+export { auth, db };
